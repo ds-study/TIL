@@ -1,24 +1,27 @@
-# 큐 (Queue)
+# 스택 (Stack)
 
-## 큐란?
-큐(Queue)는 데이터 구조의 한 종류로, 먼저 들어온 데이터가 먼저 나가는 FIFO(First In, First Out) 원칙을 따릅니다. 큐는 일상 생활에서 줄을 서는 것과 비슷한 개념입니다.
+스택은 후입선출(LIFO, Last In First Out) 방식으로 동작하는 자료 구조입니다. 스택에서는 마지막에 삽입된 요소가 가장 먼저 제거됩니다.
 
-## 큐의 주요 연산
-큐에서 주로 사용되는 연산은 다음과 같습니다:
-- `enqueue`: 큐의 뒤에 요소를 추가합니다.
-- `dequeue`: 큐의 앞에서 요소를 제거하고 반환합니다.
-- `peek` 또는 `front`: 큐의 앞에 있는 요소를 반환하지만 제거하지는 않습니다.
-- `isEmpty`: 큐가 비어 있는지 확인합니다.
-- `size`: 큐의 크기를 반환합니다.
+## 주요 연산
 
-## 큐의 종류
-큐에는 여러 종류가 있습니다:
-- **일반 큐 (Simple Queue)**: 기본적인 FIFO 구조를 따르는 큐입니다.
-- **원형 큐 (Circular Queue)**: 큐의 마지막 위치가 처음 위치와 연결되어 원형으로 동작하는 큐입니다.
-- **우선순위 큐 (Priority Queue)**: 각 요소가 우선순위를 가지고 있으며, 우선순위가 높은 요소가 먼저 나가는 큐입니다.
-- **이중 끝 큐 (Deque, Double-ended Queue)**: 양쪽 끝에서 요소를 추가하거나 제거할 수 있는 큐입니다.
+- **push**: 스택의 맨 위에 요소를 추가합니다.
+- **pop**: 스택의 맨 위에 있는 요소를 제거하고 반환합니다.
+- **peek**: 스택의 맨 위에 있는 요소를 제거하지 않고 반환합니다.
+- **isEmpty**: 스택이 비어 있는지 확인합니다.
+- **size**: 스택에 있는 요소의 개수를 반환합니다.
 
-## 큐의 구현
+## 스택의 활용 예시
+
+- **함수 호출 스택**: 함수 호출 시 호출된 함수의 정보를 스택에 저장하고, 함수가 종료되면 스택에서 제거합니다.
+- **괄호 검사**: 수식의 괄호가 올바르게 짝지어졌는지 검사할 때 사용합니다.
+- **뒤로 가기 기능**: 웹 브라우저의 뒤로 가기 기능은 스택을 이용하여 이전 페이지로 이동합니다.
+
+## 스택의 구현
+
+### 배열을 이용한 스택 구현
+
+스택은 다양한 알고리즘과 문제 해결에 유용하게 사용되는 자료 구조입니다.
+### 배열을 이용한 스택 구현 (C 언어 예시)
 
 ```c
 #include <stdio.h>
@@ -26,83 +29,108 @@
 
 #define MAX 100
 
-typedef struct s_queue {
+typedef struct s_Stack{
 	int items[MAX];
-	int front;
-	int rear;
-} Queue;
+	int top;
+} Stack;
 
-void initializeQueue(Queue *q) {
-	q->front = -1;
-	q->rear = -1;
+void initStack(Stack *s) {
+	s->top = -1;
 }
 
-int isFull(Queue *q) {
-	return q->rear == MAX - 1;
+int isFull(Stack *s) {
+	return s->top == MAX - 1;
 }
 
-int isEmpty(Queue *q) {
-	return q->front == -1 || q->front > q->rear;
+int isEmpty(Stack *s) {
+	return s->top == -1;
 }
 
-void enqueue(Queue *q, int value) {
-	if (isFull(q)) {
-		printf("Queue is full\n");
+void push(Stack *s, int item) {
+	if (isFull(s)) {
+		printf("Stack is full\n");
 		return;
 	}
-	if (isEmpty(q)) {
-		q->front = 0;
-	}
-	q->items[++q->rear] = value;
+	s->items[++(s->top)] = item;
 }
 
-int dequeue(Queue *q) {
-	if (isEmpty(q)) {
-		printf("Queue is empty\n");
-		exit(EXIT_FAILURE);
+int pop(Stack *s) {
+	if (isEmpty(s)) {
+		printf("Stack is empty\n");
+		exit(1);
 	}
-	return q->items[q->front++];
+	return s->items[(s->top)--];
 }
 
-int peek(Queue *q) {
-	if (isEmpty(q)) {
-		printf("Queue is empty\n");
-		exit(EXIT_FAILURE);
+int peek(Stack *s) {
+	if (isEmpty(s)) {
+		printf("Stack is empty\n");
+		exit(1);
 	}
-	return q->items[q->front];
+	return s->items[s->top];
 }
 
-int size(Queue *q) {
-	if (isEmpty(q)) {
-		return 0;
-	}
-	return q->rear - q->front + 1;
-}
-
-int main() {
-	Queue q;
-	initializeQueue(&q);
-
-	enqueue(&q, 10);
-	enqueue(&q, 20);
-	enqueue(&q, 30);
-
-	printf("Front element is %d\n", peek(&q));
-	printf("Queue size is %d\n", size(&q));
-
-	printf("Dequeued element is %d\n", dequeue(&q));
-	printf("Queue size is now %d\n", size(&q));
-
-	return 0;
+int size(Stack *s) {
+	return s->top + 1;
 }
 ```
 
-## 큐의 활용 예시
-큐는 다음과 같은 다양한 분야에서 활용됩니다:
-- **운영체제**: 프로세스 스케줄링
-- **네트워크**: 패킷 처리
-- **프린터**: 인쇄 작업 대기열
-- **콜센터**: 고객 대기열 관리
+### 연결 리스트를 이용한 스택 구현 (C 언어 예시)
 
-## 참고 자료
-- [위키백과: 큐](https://ko.wikipedia.org/wiki/%ED%81%90_(%EC%BB%B4%ED%93%A8%ED%8C%85))
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+	int value;
+	struct Node* next;
+} Node;
+
+typedef struct {
+	Node* top;
+	int size;
+} Stack;
+
+void initStack(Stack *s) {
+	s->top = NULL;
+	s->size = 0;
+}
+
+int isEmpty(Stack *s) {
+	return s->top == NULL;
+}
+
+void push(Stack *s, int item) {
+	Node* newNode = (Node*)malloc(sizeof(Node));
+	newNode->value = item;
+	newNode->next = s->top;
+	s->top = newNode;
+	s->size++;
+}
+
+int pop(Stack *s) {
+	if (isEmpty(s)) {
+		printf("Stack is empty\n");
+		exit(1);
+	}
+	Node* temp = s->top;
+	int item = temp->value;
+	s->top = s->top->next;
+	free(temp);
+	s->size--;
+	return item;
+}
+
+int peek(Stack *s) {
+	if (isEmpty(s)) {
+		printf("Stack is empty\n");
+		exit(1);
+	}
+	return s->top->value;
+}
+
+int size(Stack *s) {
+	return s->size;
+}
+```
+
